@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withProfile } from 'components/HOC/withProfile'; 
 import StatusBar from 'components/StatusBar';
 import Composer from 'components/Composer';
 import Post from 'components/Post';
@@ -11,45 +12,53 @@ import Styles from './styles.m.css';
 
 import { getUniqueID, delay } from 'instruments';
 
+@withProfile
 export default class Feed extends Component {
-    constructor () {
-        super();
-        this._createPost = this._createPost.bind(this);
-        this._setPostFetchingState = this._setPostFetchingState.bind(this);
-        this._likePost = this._likePost.bind(this);
-    }
-
     state = {
         posts: [
-            { id: '123', comment: 'Comment 123 🦐', created: 1526825076849, likes: [] },
-            { id: '456', comment: 'Comment 456 🙈', created: 1526825076855, likes: [] },
+            {
+                id:      '123',
+                comment: 'Comment 123 🦐',
+                created: 1526825076849,
+                likes:   [],
+            },
+            {
+                id:      '456',
+                comment: 'Comment 456 🙈',
+                created: 1526825076855,
+                likes:   [],
+            },
         ],
         isPostFetching: false,
     }
 
-    _setPostFetchingState (state) {
+    _setPostFetchingState = (state) => {
         this.setState({
             isPostFetching: state,
         });
     }
 
-    async _createPost(comment) {
+    _createPost = async (comment) => {
         this._setPostFetchingState(true);
+
         const post = {
             id:      getUniqueID(),
             created: moment.utc().unix(),
             comment,
             likes:   [],
         };
+
         await delay(1200);
+
         this.setState(({ posts }) => ({
             posts:          [ post, ...posts ],
             isPostFetching: false,
         }));
     }
 
-    async _likePost (id) {
+    _likePost = async (id) => {
         const { currentUserFirstName, currentUserLastName } = this.props;
+
         this._setPostFetchingState(true);
 
         await delay(1200);
@@ -76,6 +85,17 @@ export default class Feed extends Component {
         });
     }
 
+    _removePost = async (id) => {
+        this._setPostFetchingState(true);
+
+        await delay(1200);
+
+        this.setState(({ posts }) => ({
+            posts:          posts.filter((post) => post.id !== id),
+            isPostFetching: false,
+        }));
+    }
+
     render () {
         const { posts, isPostFetching } = this.state;
 
@@ -85,6 +105,7 @@ export default class Feed extends Component {
                     key = { post.id }
                     { ...post }
                     _likePost = { this._likePost }
+                    _removePost = { this._removePost }
                 />
             );
         });
