@@ -13,13 +13,11 @@ export default class StatusBar extends Component {
 
     componentDidMount() {
         socket.on('connect', () => {
-            console.log('connect ON 😇');
             this.setState({
                 online: true,
             });
         });
         socket.on('disconnect', () => {
-            console.log('connect OFF 🤮');
             this.setState({
                 online: false,
             });
