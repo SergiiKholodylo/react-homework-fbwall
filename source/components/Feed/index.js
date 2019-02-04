@@ -31,8 +31,8 @@ export default class Feed extends Component {
         socket.on('create', (postJSON) => {
             const { data: createdPost, meta } = JSON.parse(postJSON);
             if (
-                `${currentUserFirstName} ${currentUserLastName}` !==
-                `${meta.authorFirstName} ${meta.authorLastName}`
+                `${currentUserFirstName} ${currentUserLastName}`
+                !== `${meta.authorFirstName} ${meta.authorLastName}`
             ) {
                 this.setState(({ posts }) => ({
                     posts: [ createdPost, ...posts ],
@@ -43,8 +43,8 @@ export default class Feed extends Component {
         socket.on('delete', (postJSON) => {
             const { data: removedPost, meta } = JSON.parse(postJSON);
             if (
-                `${currentUserFirstName} ${currentUserLastName}` !==
-                `${meta.authorFirstName} ${meta.authorLastName}`
+                `${currentUserFirstName} ${currentUserLastName}`
+                !== `${meta.authorFirstName} ${meta.authorLastName}`
             ) {
                 this.setState(({ posts }) => ({
                     posts: posts.filter((post) => post.id !== removedPost.id),
@@ -122,7 +122,7 @@ export default class Feed extends Component {
     _removePost = async (id) => {
         this._setPostFetchingState(true);
 
-        const response = await fetch(`${api}/${id}`, {
+        await fetch(`${api}/${id}`, {
             method:  'DELETE',
             headers: {
                 Authorization: TOKEN,
