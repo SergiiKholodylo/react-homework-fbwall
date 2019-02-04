@@ -3,15 +3,16 @@ import React, { Component } from 'react';
 import { hot } from 'react-hot-loader';
 
 import Feed from 'components/Feed';
+import Catcher from 'components/Catcher';
 import { Provider } from 'components/HOC/withProfile';
 
 
-import avatar from 'theme/assets/lisa';
+import avatar from 'theme/assets/homer';
 
 const options = {
     avatar,
-    currentUserFirstName: 'Lisa',
-    currentUserLastName:  'Simpson',
+    currentUserFirstName: 'Сергей',
+    currentUserLastName:  'Холодило',
 };
 
 @hot(module)
@@ -19,9 +20,11 @@ const options = {
 export default class App extends Component {
     render() {
         return (
-            <Provider value = { options }>
-                <Feed  />
-            </Provider>
+            <Catcher>
+                <Provider value = { options }>
+                    <Feed  />
+                </Provider>
+            </Catcher>
         );
     }
 }
