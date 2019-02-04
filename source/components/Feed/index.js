@@ -29,6 +29,7 @@ export default class Feed extends Component {
         socket.emit('join', GROUP_ID);
 
         socket.on('create', (postJSON) => {
+            console.log('Create', JSON.parse(postJSON));
             const { data: createdPost, meta } = JSON.parse(postJSON);
             if (
                 `${currentUserFirstName} ${currentUserLastName}`
@@ -41,6 +42,7 @@ export default class Feed extends Component {
         });
 
         socket.on('delete', (postJSON) => {
+            console.log('Delete', JSON.parse(postJSON));
             const { data: removedPost, meta } = JSON.parse(postJSON);
             if (
                 `${currentUserFirstName} ${currentUserLastName}`
@@ -51,11 +53,25 @@ export default class Feed extends Component {
                 }));
             }
         });
+
+        socket.on('like', (postJSON) => {
+            const { data: likedPost, meta } = JSON.parse(postJSON);
+
+            if (
+                `${currentUserFirstName} ${currentUserLastName}`
+                !== `${meta.authorFirstName} ${meta.authorLastName}`
+            ) {
+                this.setState(({ posts }) => ({
+                    posts: posts.map((post) => post.id === likedPost.id ? likedPost : post),
+                }));
+            }
+        });
     }
 
     componentWillUnmount() {
         socket.removeListener('create');
         socket.removeListener('delete');
+        socket.removeListener('like');
     }
 
     _setPostFetchingState = (state) => {
