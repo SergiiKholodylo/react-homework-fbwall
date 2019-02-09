@@ -8,6 +8,7 @@ import StatusBar from 'components/StatusBar';
 import Composer from 'components/Composer';
 import Post from 'components/Post';
 import Spinner from 'components/Spinner';
+import Postman from 'components/Postman';
 
 import { api, TOKEN, GROUP_ID } from 'config/api';
 import { socket } from 'socket/init';
@@ -53,11 +54,25 @@ export default class Feed extends Component {
                 }));
             }
         });
+
+        socket.on('like', (postJSON) => {
+            const { data: likedPost, meta } = JSON.parse(postJSON);
+
+            if (
+                `${currentUserFirstName} ${currentUserLastName}`
+                !== `${meta.authorFirstName} ${meta.authorLastName}`
+            ) {
+                this.setState(({ posts }) => ({
+                    posts: posts.map((post) => post.id === likedPost.id ? likedPost : post),
+                }));
+            }
+        });
     }
 
     componentWillUnmount() {
         socket.removeListener('create');
         socket.removeListener('delete');
+        socket.removeListener('like');
     }
 
     _setPostFetchingState = (state) => {
@@ -140,7 +155,11 @@ export default class Feed extends Component {
     }
 
     _animateComposerEnter = (composer) => {
-        console.log(composer);
+        fromTo(composer,
+            1,
+            { opacity: 0, rotationX: 150 },
+            { opacity: 1, rotationX: 0 },
+        );
     }
 
     render () {
@@ -171,6 +190,7 @@ export default class Feed extends Component {
                     <Composer _createPost = { this._createPost } />
                 </Transition>
                 { postsJSX }
+                <Postman />
             </section>
         );
     }
