@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Transition } from 'react-transition-group';
+import { fromTo } from 'gsap';
 
 import { withProfile } from 'components/HOC/withProfile';
 import Catcher from 'components/Catcher';
@@ -66,6 +68,8 @@ export default class Feed extends Component {
 
     _fetchPosts = async () => {
         this._setPostFetchingState(true);
+
+        console.log('API', typeof api);
 
         const response = await fetch(api, {
             method: 'GET',
@@ -135,6 +139,10 @@ export default class Feed extends Component {
         }));
     }
 
+    _animateComposerEnter = (composer) => {
+        console.log(composer);
+    }
+
     render () {
         const { posts, isPostFetching } = this.state;
 
@@ -155,7 +163,13 @@ export default class Feed extends Component {
             <section className = { Styles.feed } >
                 <Spinner isSpinning = { isPostFetching } />
                 <StatusBar />
-                <Composer _createPost = { this._createPost } />
+                <Transition
+                    appear
+                    in
+                    timeout = { 1000 }
+                    onEnter = { this._animateComposerEnter }>
+                    <Composer _createPost = { this._createPost } />
+                </Transition>
                 { postsJSX }
             </section>
         );
